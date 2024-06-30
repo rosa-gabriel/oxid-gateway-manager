@@ -6,10 +6,12 @@ import axios from "axios";
 import Link from "next/link";
 import { useRef, useState } from "react";
 import { useSnackbar } from "notistack";
+import { useRouter } from "next/navigation";
 
 export default function UpstreamsPage() {
     const [modalOpen, setModalOpen] = useState<boolean>(false);
     const { enqueueSnackbar } = useSnackbar();
+    const router = useRouter();
 
     const newUpstreamName = useRef<any>();
 
@@ -22,7 +24,7 @@ export default function UpstreamsPage() {
             });
 
             enqueueSnackbar(`Upstream ${data.name} was created!`, { variant: 'success' });
-            setModalOpen(false);
+            router.push(`/upstreams/${data.id}`);
         } catch (e) {
             enqueueSnackbar(`Failed to crate upstream!`, { variant: 'error' });
         }
