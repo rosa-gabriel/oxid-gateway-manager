@@ -16,7 +16,6 @@ export default function Home() {
             <Pagination
                 getMethod={async ({ limit, offset }) => {
                     let { data } = await axios.get(`http://localhost:8080/upstreams/${params.upstreamId}/targets?offset=${offset}&limit=${limit}`);
-                    console.log(data);
                     return data.items;
                 }}
                 renderItem={(item) => (

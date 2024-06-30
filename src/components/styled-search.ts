@@ -9,7 +9,7 @@ export const Search = styled('div')(({ theme }) => ({
         backgroundColor: alpha(theme.palette.common.black, 0.15),
     },
     marginLeft: 0,
-    width: '100%',
+    flexGrow: 1,
     [theme.breakpoints.up('sm')]: {
         marginLeft: theme.spacing(1),
         width: 'auto',

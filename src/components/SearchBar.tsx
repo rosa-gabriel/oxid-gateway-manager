@@ -11,7 +11,7 @@ type PropsType = {
 export default function SearchBar({ setText }: PropsType) {
     const searchBarRef = useRef<any>();
     return (
-        <form onSubmit={(value) => {
+        <form style={{ flexGrow: 1 }} onSubmit={(value) => {
             value.preventDefault();
             setText(searchBarRef.current.value)
         }}>

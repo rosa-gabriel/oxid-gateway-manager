@@ -1,7 +1,9 @@
 "use client"
 import SearchBar from "@/components/SearchBar";
-import { Box } from "@mui/material";
+import { Box, Button, CircularProgress, Typography } from "@mui/material";
 import { ReactNode, useEffect, useState } from "react";
+
+import MuiPagination from "@mui/material/Pagination";
 
 type PaginationParams = {
     limit: number,
@@ -9,17 +11,23 @@ type PaginationParams = {
     text: string,
 }
 
+export type PaginationItems = {
+    items: any[],
+    count: number
+}
+
 type Props = {
-    getMethod: (pagination: PaginationParams) => Promise<any[]>,
+    getMethod: (pagination: PaginationParams) => Promise<PaginationItems>,
     renderItem: (item: any) => ReactNode,
 }
 
 export default function Pagination({ getMethod, renderItem }: Props) {
     let [items, setItems] = useState<any[]>([]);
+    let [count, setCount] = useState<number>(0);
     let [loading, setLoading] = useState<boolean>(false);
 
     let [pagination, setPagination] = useState<PaginationParams>({
-        limit: 10,
+        limit: 6,
         offset: 0,
         text: "",
     });
@@ -28,7 +36,8 @@ export default function Pagination({ getMethod, renderItem }: Props) {
         setLoading(true);
         getMethod(pagination)
             .then((result) => {
-                setItems(result);
+                setItems(result.items);
+                setCount(result.count);
             })
             .catch((e) => {
                 console.error(e);
@@ -41,14 +50,35 @@ export default function Pagination({ getMethod, renderItem }: Props) {
 
     return (
         <>
-            <SearchBar setText={(newValue) => {
-                setPagination((prevState) => ({
-                    ...prevState,
-                    text: newValue
-                }))
-            }} />
+            <Box display="flex">
+                <SearchBar setText={(newValue) => {
+                    setPagination((prevState) => ({
+                        ...prevState,
+                        text: newValue
+                    }))
+                }} />
+                <Button variant="contained" sx={{ ml: 4 }}>
+                    NEW
+                </Button>
+            </Box>
             <Box sx={{ mt: 5 }}>
-                {items.map(renderItem)}
+                {!loading && (
+                    <>
+                        {items.length > 0 ?
+                            items.map(renderItem) : <Typography sx={{ display: "flex", justifyContent: "center", alignItems: "center" }}>0 items found...</Typography>}
+                        <MuiPagination page={(pagination.offset / pagination.limit) + 1} onChange={(_e, value) => {
+                            setPagination((prevPagination) => ({
+                                ...prevPagination,
+                                offset: (value - 1) * prevPagination.limit
+                            }))
+                        }} sx={{ mt: 5 }} count={Math.ceil(count / pagination.limit)} />
+                    </>
+                )}
+                {loading && (
+                    <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
+                        <CircularProgress />
+                    </Box>
+                )}
             </Box>
         </>
     );

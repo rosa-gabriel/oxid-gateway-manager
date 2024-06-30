@@ -15,7 +15,6 @@ export default async function NavBarLayour({
 }>) {
     const drawerWidth = 240;
     const session = await auth();
-    console.log(session);
 
     if (session) {
         if (session?.error === "RefreshAccessTokenError") {
