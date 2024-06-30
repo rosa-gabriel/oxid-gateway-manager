@@ -5,9 +5,11 @@ import StreamIcon from '@mui/icons-material/Stream';
 import axios from "axios";
 import Link from "next/link";
 import { useRef, useState } from "react";
+import { useSnackbar } from "notistack";
 
 export default function UpstreamsPage() {
     const [modalOpen, setModalOpen] = useState<boolean>(false);
+    const { enqueueSnackbar } = useSnackbar();
 
     const newUpstreamName = useRef<any>();
 
@@ -19,9 +21,10 @@ export default function UpstreamsPage() {
                 name: upstreamName
             });
 
+            enqueueSnackbar(`Upstream ${data.name} was created!`, { variant: 'success' });
             setModalOpen(false);
         } catch (e) {
-            console.error(e);
+            enqueueSnackbar(`Failed to crate upstream!`, { variant: 'error' });
         }
     }
 

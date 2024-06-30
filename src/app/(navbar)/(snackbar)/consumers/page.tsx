@@ -5,9 +5,11 @@ import AccountBoxIcon from '@mui/icons-material/AccountBox';
 import axios from "axios";
 import Link from "next/link";
 import { useRef, useState } from "react";
+import { useSnackbar } from "notistack";
 
 export default function ConsumersPage() {
     const [modalOpen, setModalOpen] = useState<boolean>(false);
+    const { enqueueSnackbar } = useSnackbar();
 
     const newConsumerName = useRef<any>();
 
@@ -19,9 +21,10 @@ export default function ConsumersPage() {
                 name: consumerName
             });
 
+            enqueueSnackbar(`Consumer ${data.name} was created!`, { variant: 'success' });
             setModalOpen(false);
         } catch (e) {
-            console.error(e);
+            enqueueSnackbar(`Failed to crate consumer!`, { variant: 'error' });
         }
     }
 
