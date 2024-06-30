@@ -19,9 +19,10 @@ export type PaginationItems = {
 type Props = {
     getMethod: (pagination: PaginationParams) => Promise<PaginationItems>,
     renderItem: (item: any) => ReactNode,
+    onNew: () => void
 }
 
-export default function Pagination({ getMethod, renderItem }: Props) {
+export default function Pagination({ getMethod, renderItem, onNew }: Props) {
     let [items, setItems] = useState<any[]>([]);
     let [count, setCount] = useState<number>(0);
     let [loading, setLoading] = useState<boolean>(false);
@@ -57,7 +58,7 @@ export default function Pagination({ getMethod, renderItem }: Props) {
                         text: newValue
                     }))
                 }} />
-                <Button variant="contained" sx={{ ml: 4 }}>
+                <Button onClick={onNew} variant="contained" sx={{ ml: 4 }}>
                     NEW
                 </Button>
             </Box>
