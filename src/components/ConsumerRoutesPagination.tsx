@@ -120,10 +120,10 @@ export default function ConsumerRoutesPagination({ consumerId: upstreamId }: Pro
                                 try {
                                     await axios.delete(`http://localhost:8080/consumers/${upstreamId}/routes/${item.id}`);
 
-                                    enqueueSnackbar("Deleted route", { variant: 'success' });
+                                    enqueueSnackbar("Unliked consumer to route", { variant: 'success' });
                                     refresh()
                                 } catch (e) {
-                                    enqueueSnackbar("Failed to delete route", { variant: 'error' });
+                                    enqueueSnackbar("Failed to unlink consumer to route", { variant: 'error' });
                                 }
                             }}>
                                 <DeleteIcon color='primary' />
