@@ -1,17 +1,20 @@
 "use client"
 import Pagination from "@/components/Pagination";
-import { Box, Button, Card, CardActionArea, CardContent, Modal, Paper, Snackbar, Stack, TextField, Typography } from "@mui/material";
+import { Box, Button, Card, CardActionArea, CardContent, Modal, Paper, Stack, TextField, Typography } from "@mui/material";
 import AccountBoxIcon from '@mui/icons-material/AccountBox';
 import axios from "axios";
 import Link from "next/link";
 import { useRef, useState } from "react";
 import { useSnackbar } from "notistack";
+import { useRouter } from "next/navigation";
 
 export default function ConsumersPage() {
     const [modalOpen, setModalOpen] = useState<boolean>(false);
     const { enqueueSnackbar } = useSnackbar();
 
     const newConsumerName = useRef<any>();
+
+    const router = useRouter();
 
     const createConsumer = async () => {
         let consumerName = newConsumerName.current.value;
@@ -22,7 +25,7 @@ export default function ConsumersPage() {
             });
 
             enqueueSnackbar(`Consumer ${data.name} was created!`, { variant: 'success' });
-            setModalOpen(false);
+            router.push(`/consumers/${data.id}`);
         } catch (e) {
             enqueueSnackbar(`Failed to crate consumer!`, { variant: 'error' });
         }

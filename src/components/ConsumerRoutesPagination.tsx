@@ -3,44 +3,36 @@
 import ForkRightIcon from '@mui/icons-material/ForkRight';
 import DeleteIcon from '@mui/icons-material/Delete';
 import Pagination from "@/components/Pagination";
-import { Box, Button, Card, CardContent, Checkbox, FormControlLabel, Grid, IconButton, Modal, Paper, Stack, TextField, Typography } from "@mui/material";
+import { Box, Button, Card, CardContent, Checkbox, Grid, IconButton, Modal, Paper, Stack, TextField, Typography } from "@mui/material";
 import axios from "axios";
 import { useSnackbar } from "notistack";
 import { useRef, useState } from "react";
 
 type PropsType = {
-    upstreamId: number | string
+    consumerId: number | string
 }
 
-export default function UpstreamRoutesPagination({ upstreamId }: PropsType) {
+export default function ConsumerRoutesPagination({ consumerId: upstreamId }: PropsType) {
     const [modalOpen, setModalOpen] = useState<boolean>(false);
     const [_seed, setSeed] = useState<boolean>(false);
     const { enqueueSnackbar } = useSnackbar();
 
-    const newRoutePath = useRef<any>();
-    const newInnerPath = useRef<any>();
-    const newPrivate = useRef<any>();
+    const newRouteId = useRef<any>();
 
     const refresh = () => {
         setSeed(prevState => !prevState)
     }
 
     const createRoute = async () => {
-        let path = newRoutePath.current.value;
-        let innerPath = newInnerPath.current.value;
-        let isPrivate = newPrivate.current.checked;
+        const routeId = newRouteId.current.value;
 
         try {
-            let { data } = await axios.post(`http://localhost:8080/upstreams/${upstreamId}/routes`, {
-                path,
-                inner_path: innerPath.length === 0 ? undefined : innerPath,
-                private: isPrivate,
-            });
+            await axios.put(`http://localhost:8080/consumers/${upstreamId}/routes/${routeId}`);
 
-            enqueueSnackbar(`Route ${data.name} was created!`, { variant: 'success' });
+            enqueueSnackbar(`Consumer was liked to route!`, { variant: 'success' });
             setModalOpen(false);
         } catch (e) {
-            enqueueSnackbar(`Failed to crate route!`, { variant: 'error' });
+            enqueueSnackbar(`Failed to link to route!`, { variant: 'error' });
         }
     }
 
@@ -66,11 +58,9 @@ export default function UpstreamRoutesPagination({ upstreamId }: PropsType) {
                 }}>
                     <Stack>
                         <Typography color="primary" variant="h4" mb={3}>
-                            Create Route
+                            Link to Route
                         </Typography>
-                        <TextField inputRef={newRoutePath} sx={{ mb: 2 }} label="Path" />
-                        <TextField inputRef={newInnerPath} sx={{ mb: 2 }} label="Inner Path" />
-                        <FormControlLabel control={<Checkbox inputRef={newPrivate} />} label="Private" />
+                        <TextField inputRef={newRouteId} sx={{ mb: 2 }} label="Route ID" />
                         <Button sx={{ mt: 3 }} variant="contained" onClick={createRoute}>
                             SAVE
                         </Button>
@@ -80,7 +70,7 @@ export default function UpstreamRoutesPagination({ upstreamId }: PropsType) {
             <Pagination
                 onNew={() => setModalOpen(true)}
                 getMethod={async ({ limit, offset, text }) => {
-                    let { data } = await axios.get(`http://localhost:8080/upstreams/${upstreamId}/routes?offset=${offset}&limit=${limit}&text=${text}`);
+                    let { data } = await axios.get(`http://localhost:8080/consumers/${upstreamId}/routes?offset=${offset}&limit=${limit}&text=${text}`);
 
                     return {
                         items: data.items,
@@ -99,15 +89,7 @@ export default function UpstreamRoutesPagination({ upstreamId }: PropsType) {
                             <Box display="flex" alignItems={"center"} flexGrow={1}>
                                 <ForkRightIcon />
                                 <Grid container ml={3} flexGrow={1}>
-                                    <Grid xs={3}>
-                                        <Typography fontWeight={700}>
-                                            Route Id
-                                        </Typography>
-                                        <Typography>
-                                            {item.id}
-                                        </Typography>
-                                    </Grid>
-                                    <Grid xs={3}>
+                                    <Grid xs={4}>
                                         <Typography fontWeight={700}>
                                             Path
                                         </Typography>
@@ -115,7 +97,7 @@ export default function UpstreamRoutesPagination({ upstreamId }: PropsType) {
                                             {item.path}
                                         </Typography>
                                     </Grid>
-                                    <Grid xs={3}>
+                                    <Grid xs={4}>
                                         <Typography fontWeight={700}>
                                             Inner Path
                                         </Typography>
@@ -123,7 +105,7 @@ export default function UpstreamRoutesPagination({ upstreamId }: PropsType) {
                                             {item.inner_path ?? '-'}
                                         </Typography>
                                     </Grid>
-                                    <Grid xs={3}>
+                                    <Grid xs={4}>
                                         <Typography fontWeight={700}>
                                             Private
                                         </Typography>
@@ -136,7 +118,7 @@ export default function UpstreamRoutesPagination({ upstreamId }: PropsType) {
                             </Box>
                             <IconButton sx={{ alignSelf: "end" }} onClick={async () => {
                                 try {
-                                    await axios.delete(`http://localhost:8080/upstreams/${upstreamId}/routes/${item.id}`);
+                                    await axios.delete(`http://localhost:8080/consumers/${upstreamId}/routes/${item.id}`);
 
                                     enqueueSnackbar("Deleted route", { variant: 'success' });
                                     refresh()

@@ -1,6 +1,6 @@
 "use client"
 import Pagination from "@/components/Pagination";
-import { Box, Button, Card, CardActionArea, CardContent, Modal, Paper, Snackbar, Stack, TextField, Typography } from "@mui/material";
+import { Box, Button, Card, CardActionArea, CardContent, Modal, Paper, Stack, TextField, Typography } from "@mui/material";
 import StreamIcon from '@mui/icons-material/Stream';
 import axios from "axios";
 import Link from "next/link";
