@@ -1,48 +1,49 @@
 import { signIn } from "@/app/auth"
-import { Box, Button, Grid, Paper, Typography } from "@mui/material"
+import WhatshotIcon from '@mui/icons-material/Whatshot';
+import { Box, Button, Grid, Paper, Stack, Typography, useTheme } from "@mui/material"
+
 
 export default function LoginPage() {
     return (
         <Grid
             container
-            component="main"
+            spacing={0}
+            direction="column"
+            alignItems="center"
+            justifyContent="center"
             sx={{
-                height: "100vh",
+                minHeight: '100vh',
+                backgroundColor: "#F36D00",
             }}
         >
-            <Grid
-                item
-                square
-                xs={12}
-                sm={6}
-                md={4}
-                component={Paper}
-                elevation={6}
-            >
-                <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", p: 5 }}>
-                    <Typography component="h1" variant="h4" mb={8}>
-                        {"Oxid Gateway"}
+            <Grid item xs={3}>
+                <Stack component={Paper} sx={{
+                    p: 4,
+                    minWidth: 400,
+                    display: "flex",
+                    alignItems: "center"
+                }}>
+                    <Typography variant="h2" fontWeight={700} mb={2} sx={{
+                        color: "#F36D00"
+                    }}>
+                        Oxid Gateway
+                    </Typography>
+                    <Typography mb={2}>
+                        Sign Up Using
                     </Typography>
                     <form
+                        style={{
+                            width: "100%"
+                        }}
                         action={async () => {
                             "use server"
                             await signIn("keycloak", { redirectTo: "/" })
                         }}
                     >
-                        <Button variant="contained" type="submit">Sign In</Button>
+                        <Button variant="contained" fullWidth type="submit">Sign In</Button>
                     </form>
-                </Box>
+                </Stack>
             </Grid>
-
-            <Grid
-                item
-                xs={false}
-                sm={6}
-                md={8}
-                sx={{
-                    backgroundColor: "#F36D00",
-                }}
-            />
         </Grid>
     )
 }
