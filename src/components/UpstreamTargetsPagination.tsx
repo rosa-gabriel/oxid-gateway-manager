@@ -17,6 +17,7 @@ export default function UpstreamTargetsPagination({ upstreamId }: PropsType) {
     const [_seed, setSeed] = useState<boolean>(false);
     const { enqueueSnackbar } = useSnackbar();
 
+    const newTargetProtocol = useRef<any>();
     const newTargetName = useRef<any>();
     const newTargetPort = useRef<any>();
 
@@ -25,11 +26,13 @@ export default function UpstreamTargetsPagination({ upstreamId }: PropsType) {
     }
 
     const createTarget = async () => {
+        let protocol = newTargetProtocol.current.value;
         let targetName = newTargetName.current.value;
         let targetPort = newTargetPort.current.value;
 
         try {
             let { data } = await axios.post(`http://localhost:8080/upstreams/${upstreamId}/targets`, {
+                protocol,
                 host: targetName,
                 port: parseInt(targetPort),
             });
@@ -65,6 +68,7 @@ export default function UpstreamTargetsPagination({ upstreamId }: PropsType) {
                         <Typography color="primary" variant="h4" mb={3}>
                             Create Target
                         </Typography>
+                        <TextField inputRef={newTargetProtocol} sx={{ mb: 2 }} label="Protocol" />
                         <TextField inputRef={newTargetName} sx={{ mb: 2 }} label="Host" />
                         <TextField inputRef={newTargetPort} label="Port" />
                         <Button sx={{ mt: 3 }} variant="contained" onClick={createTarget}>
@@ -100,7 +104,7 @@ export default function UpstreamTargetsPagination({ upstreamId }: PropsType) {
                                             Protocol
                                         </Typography>
                                         <Typography>
-                                            http
+                                            {item.protocol}
                                         </Typography>
                                     </Grid>
                                     <Grid xs={4}>
