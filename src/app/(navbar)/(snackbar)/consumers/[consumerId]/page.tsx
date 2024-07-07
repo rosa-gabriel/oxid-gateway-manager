@@ -7,6 +7,7 @@ import { useEffect, useRef, useState } from "react";
 import { useSnackbar } from 'notistack';
 import CheckIcon from '@mui/icons-material/Check';
 import ConsumerRoutesPagination from '@/components/ConsumerRoutesPagination';
+import { deleteConsumer, getConsumer, putConsumer } from '@/lib/admin-requests';
 
 export default function RoutePage() {
     const [consumer, setConsumer] = useState<any>();
@@ -20,7 +21,7 @@ export default function RoutePage() {
     useEffect(() => {
         (async () => {
             try {
-                let { data } = await axios.get(`http://localhost:8080/consumers/${consumerId}`);
+                let data = await getConsumer(consumerId as string);
 
                 setConsumer(data);
             } catch (e) {
@@ -73,7 +74,7 @@ export default function RoutePage() {
                                     let consumerName = nameRef.current.value;
 
                                     try {
-                                        let { data } = await axios.put(`http://localhost:8080/consumers/${consumer.id}`, {
+                                        let data = await putConsumer(consumer.id, {
                                             name: consumerName
                                         });
 
@@ -87,7 +88,7 @@ export default function RoutePage() {
                                 </IconButton>
                                 <IconButton onClick={async () => {
                                     try {
-                                        await axios.delete(`http://localhost:8080/consumers/${consumerId}`);
+                                        await deleteConsumer(consumerId as string);
 
                                         enqueueSnackbar("Deleted Consumer", { variant: 'success' });
                                         router.push("/consumers");
@@ -99,7 +100,7 @@ export default function RoutePage() {
                                 </IconButton>
                             </Grid>
                         </Grid>
-                        <ConsumerRoutesPagination consumerId={consumerId as string}/>
+                        <ConsumerRoutesPagination consumerId={consumerId as string} />
                     </Paper>
                 </>
             )}

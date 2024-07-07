@@ -4,9 +4,9 @@ import CrisisAlertIcon from '@mui/icons-material/CrisisAlert';
 import DeleteIcon from '@mui/icons-material/Delete';
 import Pagination from "@/components/Pagination";
 import { Box, Button, Card, CardContent, Grid, IconButton, Modal, Paper, Stack, TextField, Typography } from "@mui/material";
-import axios from "axios";
 import { useSnackbar } from "notistack";
 import { useRef, useState } from "react";
+import { deleteUpstreamTarget, getUpstreamTargets, postTarget } from '@/lib/admin-requests';
 
 type PropsType = {
     upstreamId: number | string
@@ -31,7 +31,7 @@ export default function UpstreamTargetsPagination({ upstreamId }: PropsType) {
         let targetPort = newTargetPort.current.value;
 
         try {
-            let { data } = await axios.post(`http://localhost:8080/upstreams/${upstreamId}/targets`, {
+            let data = await postTarget(upstreamId, {
                 protocol,
                 host: targetName,
                 port: parseInt(targetPort),
@@ -79,8 +79,8 @@ export default function UpstreamTargetsPagination({ upstreamId }: PropsType) {
             </Modal>
             <Pagination
                 onNew={() => setModalOpen(true)}
-                getMethod={async ({ limit, offset, text }) => {
-                    let { data } = await axios.get(`http://localhost:8080/upstreams/${upstreamId}/targets?offset=${offset}&limit=${limit}&text=${text}`);
+                getMethod={async (pagination) => {
+                    let data = await getUpstreamTargets(upstreamId, pagination);
 
                     return {
                         items: data.items,
@@ -128,7 +128,7 @@ export default function UpstreamTargetsPagination({ upstreamId }: PropsType) {
                             </Box>
                             <IconButton sx={{ alignSelf: "end" }} onClick={async () => {
                                 try {
-                                    await axios.delete(`http://localhost:8080/upstreams/${upstreamId}/targets/${item.id}`);
+                                    await deleteUpstreamTarget(upstreamId, item.id);
 
                                     enqueueSnackbar("Deleted target", { variant: 'success' });
                                     refresh()

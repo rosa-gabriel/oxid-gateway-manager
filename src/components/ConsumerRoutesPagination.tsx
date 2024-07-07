@@ -3,16 +3,16 @@
 import ForkRightIcon from '@mui/icons-material/ForkRight';
 import DeleteIcon from '@mui/icons-material/Delete';
 import Pagination from "@/components/Pagination";
-import { Box, Button, Card, CardContent, Checkbox, Grid, IconButton, Modal, Paper, Stack, TextField, Typography } from "@mui/material";
-import axios from "axios";
+import { Box, Button, Card, CardContent, Grid, IconButton, Modal, Paper, Stack, TextField, Typography } from "@mui/material";
 import { useSnackbar } from "notistack";
 import { useRef, useState } from "react";
+import { deleteConsumerRoute, getConsumerRoutes, linkConsumerToRoute } from '@/lib/admin-requests';
 
 type PropsType = {
     consumerId: number | string
 }
 
-export default function ConsumerRoutesPagination({ consumerId: upstreamId }: PropsType) {
+export default function ConsumerRoutesPagination({ consumerId }: PropsType) {
     const [modalOpen, setModalOpen] = useState<boolean>(false);
     const [_seed, setSeed] = useState<boolean>(false);
     const { enqueueSnackbar } = useSnackbar();
@@ -27,7 +27,7 @@ export default function ConsumerRoutesPagination({ consumerId: upstreamId }: Pro
         const routeId = newRouteId.current.value;
 
         try {
-            await axios.put(`http://localhost:8080/consumers/${upstreamId}/routes/${routeId}`);
+            await linkConsumerToRoute(consumerId, routeId);
 
             enqueueSnackbar(`Consumer was liked to route!`, { variant: 'success' });
             setModalOpen(false);
@@ -69,8 +69,8 @@ export default function ConsumerRoutesPagination({ consumerId: upstreamId }: Pro
             </Modal>
             <Pagination
                 onNew={() => setModalOpen(true)}
-                getMethod={async ({ limit, offset, text }) => {
-                    let { data } = await axios.get(`http://localhost:8080/consumers/${upstreamId}/routes?offset=${offset}&limit=${limit}&text=${text}`);
+                getMethod={async (pagination) => {
+                    let data = await getConsumerRoutes(consumerId, pagination);
 
                     return {
                         items: data.items,
@@ -118,7 +118,7 @@ export default function ConsumerRoutesPagination({ consumerId: upstreamId }: Pro
                             </Box>
                             <IconButton sx={{ alignSelf: "end" }} onClick={async () => {
                                 try {
-                                    await axios.delete(`http://localhost:8080/consumers/${upstreamId}/routes/${item.id}`);
+                                    await deleteConsumerRoute(consumerId, item.id);
 
                                     enqueueSnackbar("Unliked consumer to route", { variant: 'success' });
                                     refresh()

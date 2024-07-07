@@ -8,6 +8,7 @@ import { useEffect, useRef, useState } from "react";
 import { useSnackbar } from 'notistack';
 import CheckIcon from '@mui/icons-material/Check';
 import UpstreamRoutesPagination from '@/components/UpstreamRoutesPagination';
+import { deleteUpstream, getUpstream, putUpstream } from '@/lib/admin-requests';
 
 export default function UpstreamPage() {
     const [upstream, setUpstream] = useState<any>();
@@ -21,7 +22,7 @@ export default function UpstreamPage() {
     useEffect(() => {
         (async () => {
             try {
-                let { data } = await axios.get(`http://localhost:8080/upstreams/${upstreamId}`);
+                let data = await getUpstream(upstreamId as string);
 
                 setUpstream(data);
             } catch (e) {
@@ -65,7 +66,7 @@ export default function UpstreamPage() {
                                     let upstreamName = nameRef.current.value;
 
                                     try {
-                                        let { data } = await axios.put(`http://localhost:8080/upstreams/${upstream.id}`, {
+                                        let data = await putUpstream(upstream.id, {
                                             name: upstreamName
                                         });
 
@@ -79,7 +80,7 @@ export default function UpstreamPage() {
                                 </IconButton>
                                 <IconButton onClick={async () => {
                                     try {
-                                        let { data } = await axios.delete(`http://localhost:8080/upstreams/${upstreamId}`);
+                                        await deleteUpstream(upstreamId as string);
 
                                         enqueueSnackbar("Deleted Upstream", { variant: 'success' });
                                         router.push("/upstreams");

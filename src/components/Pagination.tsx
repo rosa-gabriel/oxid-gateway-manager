@@ -5,7 +5,7 @@ import { ReactNode, useEffect, useState } from "react";
 
 import MuiPagination from "@mui/material/Pagination";
 
-type PaginationParams = {
+export type PaginationParams = {
     limit: number,
     offset: number,
     text: string,

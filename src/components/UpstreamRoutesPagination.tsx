@@ -4,9 +4,9 @@ import ForkRightIcon from '@mui/icons-material/ForkRight';
 import DeleteIcon from '@mui/icons-material/Delete';
 import Pagination from "@/components/Pagination";
 import { Box, Button, Card, CardContent, Checkbox, FormControlLabel, Grid, IconButton, Modal, Paper, Stack, TextField, Typography } from "@mui/material";
-import axios from "axios";
 import { useSnackbar } from "notistack";
 import { useRef, useState } from "react";
+import { deleteUpstreamRoute, getUpstreamRoutes, postRoute, postTarget } from '@/lib/admin-requests';
 
 type PropsType = {
     upstreamId: number | string
@@ -31,7 +31,7 @@ export default function UpstreamRoutesPagination({ upstreamId }: PropsType) {
         let isPrivate = newPrivate.current.checked;
 
         try {
-            let { data } = await axios.post(`http://localhost:8080/upstreams/${upstreamId}/routes`, {
+            let data = await postRoute(upstreamId, {
                 path,
                 inner_path: innerPath.length === 0 ? undefined : innerPath,
                 private: isPrivate,
@@ -79,8 +79,8 @@ export default function UpstreamRoutesPagination({ upstreamId }: PropsType) {
             </Modal>
             <Pagination
                 onNew={() => setModalOpen(true)}
-                getMethod={async ({ limit, offset, text }) => {
-                    let { data } = await axios.get(`http://localhost:8080/upstreams/${upstreamId}/routes?offset=${offset}&limit=${limit}&text=${text}`);
+                getMethod={async (pagination) => {
+                    let data = await getUpstreamRoutes(upstreamId, pagination);
 
                     return {
                         items: data.items,
@@ -136,7 +136,7 @@ export default function UpstreamRoutesPagination({ upstreamId }: PropsType) {
                             </Box>
                             <IconButton sx={{ alignSelf: "end" }} onClick={async () => {
                                 try {
-                                    await axios.delete(`http://localhost:8080/upstreams/${upstreamId}/routes/${item.id}`);
+                                    await deleteUpstreamRoute(upstreamId, item.id);
 
                                     enqueueSnackbar("Deleted route", { variant: 'success' });
                                     refresh()

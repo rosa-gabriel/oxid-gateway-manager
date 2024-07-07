@@ -7,6 +7,7 @@ import Link from "next/link";
 import { useRef, useState } from "react";
 import { useSnackbar } from "notistack";
 import { useRouter } from "next/navigation";
+import { getUpstreams, postUpstream } from "@/lib/admin-requests";
 
 export default function UpstreamsPage() {
     const [modalOpen, setModalOpen] = useState<boolean>(false);
@@ -19,7 +20,7 @@ export default function UpstreamsPage() {
         let upstreamName = newUpstreamName.current.value;
 
         try {
-            let { data } = await axios.post(`http://localhost:8080/upstreams`, {
+            let data = await postUpstream({
                 name: upstreamName
             });
 
@@ -63,8 +64,8 @@ export default function UpstreamsPage() {
             </Modal>
             <Pagination
                 onNew={() => setModalOpen(true)}
-                getMethod={async ({ limit, offset, text }) => {
-                    let { data } = await axios.get(`http://localhost:8080/upstreams?offset=${offset}&limit=${limit}&text=${text}`);
+                getMethod={async (pagination) => {
+                    let data = await getUpstreams(pagination);
 
                     return {
                         items: data.items,

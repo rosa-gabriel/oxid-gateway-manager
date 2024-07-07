@@ -7,6 +7,7 @@ import Link from "next/link";
 import { useRef, useState } from "react";
 import { useSnackbar } from "notistack";
 import { useRouter } from "next/navigation";
+import { getConsumers, postConsumer } from "@/lib/admin-requests";
 
 export default function ConsumersPage() {
     const [modalOpen, setModalOpen] = useState<boolean>(false);
@@ -20,7 +21,7 @@ export default function ConsumersPage() {
         let consumerName = newConsumerName.current.value;
 
         try {
-            let { data } = await axios.post(`http://localhost:8080/consumers`, {
+            let data = await postConsumer({
                 name: consumerName
             });
 
@@ -64,8 +65,8 @@ export default function ConsumersPage() {
             </Modal>
             <Pagination
                 onNew={() => setModalOpen(true)}
-                getMethod={async ({ limit, offset, text }) => {
-                    let { data } = await axios.get(`http://localhost:8080/consumers?offset=${offset}&limit=${limit}&text=${text}`);
+                getMethod={async (pagination) => {
+                    let data = await getConsumers(pagination);
 
                     return {
                         items: data.items,
