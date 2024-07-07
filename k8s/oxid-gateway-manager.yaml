@@ -30,6 +30,10 @@ spec:
               value: nEH0DT0mDucfWTlWFndgtuosM9PID1dMq8GR1NKnFok=
             - name: ADMIN_API_URL
               value: http://oxid-gateway-admin-service:8080
+            - name: AUTH_TRUST_HOST
+              value: "true"
+            - name: AUTH_URL
+              value: http://localhost:3000/api/auth
 ---
 apiVersion: v1
 kind: Service
