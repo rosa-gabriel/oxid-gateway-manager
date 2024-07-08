@@ -1,7 +1,6 @@
 import { signIn } from "@/app/auth"
-import WhatshotIcon from '@mui/icons-material/Whatshot';
-import { Box, Button, Grid, Paper, Stack, Typography, useTheme } from "@mui/material"
-
+import { Box, Button, Grid, Modal, Paper, Stack, Typography, useTheme } from "@mui/material"
+import { redirect } from "next/navigation"
 
 export default function LoginPage() {
     return (
@@ -31,6 +30,17 @@ export default function LoginPage() {
                     <Typography mb={2}>
                         Sign Up Using
                     </Typography>
+                    <form
+                        style={{
+                            width: "100%"
+                        }}
+                        action={async () => {
+                            "use server"
+                            redirect("/terms")
+                        }}
+                    >
+                        <Button fullWidth type="submit">Terms of use</Button>
+                    </form>
                     <form
                         style={{
                             width: "100%"
